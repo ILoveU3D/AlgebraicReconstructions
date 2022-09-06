@@ -1,0 +1,10 @@
+angles: 48
+detectorSize:
+  - 511
+  - 511
+volumeSize:
+  - 256
+  - 256
+  - 72
+SID: 1000
+SOD: 0

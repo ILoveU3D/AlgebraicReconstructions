@@ -1,0 +1,4 @@
+epoch: 100
+debug: /media/seu/wyk/Recon/DTV/results
+debugfeqs: 1
+device: cuda:0

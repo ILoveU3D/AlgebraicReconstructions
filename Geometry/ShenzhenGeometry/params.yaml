@@ -1,0 +1,9 @@
+root: /media/seu/wyk/Recon/DTV-net/model/ConeBeamLayers/ShenzhenParams
+anglesNum: 32
+detectorSize:
+  - 2940
+  - 2304
+volumeSize:
+  - 256
+  - 256
+  - 72
