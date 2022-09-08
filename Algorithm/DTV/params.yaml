@@ -1,4 +1,4 @@
-epoch: 100
+epoch: 1000
 debug: /media/seu/wyk/Recon/DTV/results
-debugfeqs: 1
+debugfeqs: 100
 device: cuda:0

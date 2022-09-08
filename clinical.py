@@ -1,6 +1,6 @@
 import torch
 import numpy as np
-from Geometry.ShenzhenGeometry.Geometry import ShenzhenGeometry
+from Geometry.ShenzhenGeometry.GeometryFly import ShenzhenGeometry
 from Algorithm.DTV.CP import DTVCP
 
 geometry = ShenzhenGeometry()

@@ -1,4 +1,4 @@
-root: /media/seu/wyk/Recon/DTV-net/model/ConeBeamLayers/ShenzhenParams
+root: /media/seu/wyk/shenzhen/shenzhendata/飞拍1
 anglesNum: 32
 detectorSize:
   - 2940
@@ -7,3 +7,4 @@ volumeSize:
   - 256
   - 256
   - 72
+fly: 32
