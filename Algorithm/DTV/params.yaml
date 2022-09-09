@@ -1,4 +1,4 @@
-epoch: 1000
-debug: /media/seu/wyk/Recon/DTV/results
+epoch: 1001
+debug: /home/nv/wyk/raws/shenzhendata2/飞拍/位置3/output
 debugfeqs: 100
-device: cuda:0
+device: cuda:3

@@ -15,10 +15,10 @@ class DTVCP(Algorithm):
         self.debug = params["debug"]
         self.device = params["device"]
         self.feqs = params["debugfeqs"]
-        self.dx, self.dxt, normDx = spraseMatrixX(tuple(geometry.volumeSize))
-        self.dy, self.dyt, normDy = spraseMatrixY(tuple(geometry.volumeSize))
-        self.dz, self.dzt, normDz = spraseMatrixZ(tuple(geometry.volumeSize))
-        _, _, normI = spraseMatrixI(tuple(geometry.volumeSize))
+        self.dx, self.dxt, normDx = spraseMatrixX(tuple(geometry.volumeSize), self.device)
+        self.dy, self.dyt, normDy = spraseMatrixY(tuple(geometry.volumeSize), self.device)
+        self.dz, self.dzt, normDz = spraseMatrixZ(tuple(geometry.volumeSize), self.device)
+        _, _, normI = spraseMatrixI(tuple(geometry.volumeSize), self.device)
         normH = power_method(geometry.H)
         self.v1 = normH / normDx
         self.v2 = normH / normDy

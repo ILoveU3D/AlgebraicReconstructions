@@ -24,7 +24,10 @@ class ShenzhenGeometry(Geometry):
         volumeSize = params["volumeSize"]
         volumeGeometry = astra.create_vol_geom(volumeSize[0], volumeSize[1], volumeSize[2])
         for id in range(systemNum):
-            projectVector = projVec[:,id::anglesNum].T
+            projectVector = projVec[:,id::systemNum].T
+            projectVector[:, [0, 1, 3, 4, 6, 7, 9, 10]] /= 2
+            projectVector[:,[2,5]] += 450
+            projectVector[:, [2, 5]] /= 2
             projectorGeometry = astra.create_proj_geom('cone_vec', detectorSize[0],detectorSize[1], projectVector)
             projector = astra.create_projector('cuda3d',projectorGeometry,volumeGeometry)
             self.Hs.append(astra.OpTomo(projector))

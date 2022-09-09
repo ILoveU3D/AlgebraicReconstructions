@@ -5,7 +5,7 @@ from .hyperParams import power_method,power_method_K
 
 matrixSet = []
 
-def spraseMatrixX(volumeSize:tuple):
+def spraseMatrixX(volumeSize:tuple, device:str):
     N = volumeSize[0] * volumeSize[1] * volumeSize[2]
     row,col,data = _init(N)
     for i in range(N):
@@ -13,30 +13,30 @@ def spraseMatrixX(volumeSize:tuple):
             row.append(i)
             col.append(i + 1)
             data.append(1.0)
-    return __getSpraseMatrix(row,col,data,N)
+    return __getSpraseMatrix(row,col,data,N,device)
 
-def spraseMatrixY(volumeSize:tuple):
+def spraseMatrixY(volumeSize:tuple, device:str):
     N = volumeSize[0] * volumeSize[1] * volumeSize[2]
     row, col, data = _init(N)
     for i in range(N - volumeSize[1]):
         row.append(i)
         col.append(i + volumeSize[1])
         data.append(1.0)
-    return __getSpraseMatrix(row,col,data,N)
+    return __getSpraseMatrix(row,col,data,N,device)
 
-def spraseMatrixZ(volumeSize:tuple):
+def spraseMatrixZ(volumeSize:tuple, device:str):
     N = volumeSize[0] * volumeSize[1] * volumeSize[2]
     row, col, data = _init(N)
     for i in range(N - volumeSize[1] * volumeSize[0]):
         row.append(i)
         col.append(i + volumeSize[1] * volumeSize[0])
         data.append(1.0)
-    return __getSpraseMatrix(row,col,data,N)
+    return __getSpraseMatrix(row,col,data,N,device)
 
-def spraseMatrixI(volumeSize:tuple):
+def spraseMatrixI(volumeSize:tuple, device:str):
     N = volumeSize[0] * volumeSize[1] * volumeSize[2]
     row, col, data = _init(N)
-    return __getSpraseMatrix(row,col,data,N)
+    return __getSpraseMatrix(row,col,data,N, device)
 
 def _init(N:int):
     row = []
@@ -48,13 +48,13 @@ def _init(N:int):
         data.append(-1.0)
     return row,col,data
 
-def __getSpraseMatrix(row,col,data,N):
+def __getSpraseMatrix(row,col,data,N,device):
     i = torch.LongTensor([row, col])
     v = torch.FloatTensor(data)
-    D = torch.sparse.FloatTensor(i, v, (N,N)).cuda()
+    D = torch.sparse.FloatTensor(i, v, (N,N)).to(device)
     i = torch.LongTensor([col, row])
     v = torch.FloatTensor(data)
-    DT = torch.sparse.FloatTensor(i, v, (N,N)).cuda()
+    DT = torch.sparse.FloatTensor(i, v, (N,N)).to(device)
     matrix = csc_matrix((np.array(data), (np.array(row), np.array(col))), shape=(N, N))
     norm = power_method(matrix)
     matrixSet.append(matrix)

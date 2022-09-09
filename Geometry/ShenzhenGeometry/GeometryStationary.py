@@ -21,6 +21,9 @@ class ShenzhenGeometry(Geometry):
             projectVector[i, 3:6] = det[:, i]
             projectVector[i, 6:9] = u[:, i]
             projectVector[i, 9:12] = v[:, i]
+        projectVector[:,[0,1,3,4,6,7,9,10]] /= 2
+        # projectVector[:,[2,5]] += 500
+        projectVector[:,[2,5]] /= 2
         detectorSize = params["detectorSize"]
         projectorGeometry = astra.create_proj_geom('cone_vec', detectorSize[0],detectorSize[1], projectVector)
         volumeSize = params["volumeSize"]

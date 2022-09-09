@@ -1,10 +1,10 @@
-root: /media/seu/wyk/shenzhen/shenzhendata/飞拍1
+root: /home/nv/wyk/raws/shenzhendata2/飞拍/参数1
 anglesNum: 32
 detectorSize:
   - 2940
   - 2304
 volumeSize:
-  - 256
-  - 256
-  - 72
-fly: 32
+  - 800
+  - 800
+  - 100
+fly: 65
