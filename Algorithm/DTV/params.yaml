@@ -1,4 +1,4 @@
 epoch: 1001
-debug: /home/nv/wyk/raws/shenzhendata2/飞拍/位置3/output
+debug: /home/nv/wyk/raws/shenzhendata2/飞拍/低放大倍数/output
 debugfeqs: 100
 device: cuda:3
