@@ -3,10 +3,11 @@ import numpy as np
 # from Geometry.ShenzhenGeometry.GeometryStationary import ShenzhenGeometry
 from Geometry.ShenzhenGeometry.GeometryFly import ShenzhenGeometry
 from Geometry.StandardGeometry.Geometry import StandardGeometry
+from Geometry.BeijingGeometry.Geometry import BeijingGeometry
 from Utils.AstraConvertion import astra2Projection
 from Algorithm.DTV.CP import DTVCP
 
-geometry = ShenzhenGeometry()
+geometry = BeijingGeometry()
 dtv = DTVCP(geometry)
 
 data = np.fromfile("/media/seu/wyk/Data/raws/sample.raw", dtype="float32")
