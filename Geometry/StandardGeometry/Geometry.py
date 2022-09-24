@@ -1,6 +1,7 @@
 import os
 import yaml
 import astra
+import torch
 import numpy as np
 from ..Geometry import Geometry
 
@@ -16,11 +17,13 @@ class StandardGeometry(Geometry):
         detectorSize.append(params["angles"])
         super(StandardGeometry, self).__init__(volumeSize, detectorSize, astra.OpTomo(projector))
         self.weight = self.H.T * self.H * np.ones(self.volumeSize).flatten()
+        self.torchVolumeSize = [1, volumeSize[2], volumeSize[1], volumeSize[0]]
+        self.torchDetectorSize = [1, detectorSize[2], detectorSize[1], detectorSize[0]]
 
-    def fp(self, volume):
-        sino = self.H * volume.flatten()
-        return sino.reshape(self.detectorSize)
+    def fp(self, volume, device):
+        sino = self.H * volume.cpu().flatten()
+        return torch.from_numpy(sino.reshape(self.detectorSize)).to(device)
 
-    def bp(self, sino):
-        volume = self.H.T * sino.flatten() / self.weight
-        return volume.reshape(self.volumeSize)
+    def bp(self, sino, device):
+        volume = self.H.T * sino.cpu().flatten() / self.weight
+        return torch.from_numpy(volume.reshape(self.volumeSize)).to(device)

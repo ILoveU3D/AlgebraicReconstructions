@@ -7,13 +7,11 @@ from Geometry.BeijingGeometry.Geometry import BeijingGeometry
 from Utils.AstraConvertion import astra2Projection
 from Algorithm.DTV.CP import DTVCP
 
-geometry = BeijingGeometry()
+geometry = StandardGeometry()
 dtv = DTVCP(geometry)
 
-data = np.fromfile("/media/seu/wyk/Data/raws/sample.raw", dtype="float32")
+data = np.fromfile("/home/nv/wyk/raws/trainData/1.raw", dtype="float32")
 data = np.reshape(data, geometry.torchVolumeSize)
 data = torch.from_numpy(data)
 sino = geometry.fp(data, dtv.device)
-# astra2Projection(sino.reshape(geometry.detectorSize)).cpu().numpy().tofile("/media/seu/wyk/Data/raws/r.raw")
-# output = dtv.run(geometry.bp(sino, dtv.device), sino)
-geometry.bp(sino, dtv.device).cpu().numpy().tofile("/media/seu/wyk/Data/raws/r.raw")
+output = dtv.run(geometry.bp(sino, dtv.device), sino)

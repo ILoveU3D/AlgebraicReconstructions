@@ -19,12 +19,14 @@ class DTVCP(Algorithm):
         self.dy, self.dyt, normDy = spraseMatrixY(tuple(geometry.volumeSize), self.device)
         self.dz, self.dzt, normDz = spraseMatrixZ(tuple(geometry.volumeSize), self.device)
         _, _, normI = spraseMatrixI(tuple(geometry.volumeSize), self.device)
-        normH = power_method(geometry.H)
+        # normH = power_method(geometry.H)
+        normH = 108
         self.v1 = normH / normDx
         self.v2 = normH / normDy
         self.v3 = normH / normDz
         self.mu = normH / normI
-        L = getNormK(geometry.H, [1, self.v1, self.v2, self.v3, self.mu])
+        # L = getNormK(geometry.H, [1, self.v1, self.v2, self.v3, self.mu])
+        L = 211
         print("||K||={}".format(L))
         self.tao = 1 / L
         self.sigma = 1 / L

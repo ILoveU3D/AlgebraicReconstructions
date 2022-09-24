@@ -1,4 +1,4 @@
-epoch: 1001
-debug: /home/nv/wyk/raws/shenzhendata2/飞拍/低放大倍数/output
+epoch: 5001
+debug: /home/nv/wyk/raws/temp/
 debugfeqs: 100
 device: cuda:0

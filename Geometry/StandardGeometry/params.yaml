@@ -5,6 +5,6 @@ detectorSize:
 volumeSize:
   - 256
   - 256
-  - 72
+  - 16
 SID: 1000
 SOD: 0

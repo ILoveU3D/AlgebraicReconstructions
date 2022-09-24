@@ -3,11 +3,11 @@ SOD: 708
 pixelSpacing: 0.265
 zOffset: 100
 detectorSize:
-  - 3072
-  - 288
+  - 769
+  - 72
 volumeSize:
   - 512
   - 512
   - 72
-anglesRoot: /media/seu/wyk/Data/raws/0
-anglesNum: 72
+anglesRoot: /home/nv/mcl/data/lung/zhiyuanzhe/corr/0_binning
+anglesNum: 360
