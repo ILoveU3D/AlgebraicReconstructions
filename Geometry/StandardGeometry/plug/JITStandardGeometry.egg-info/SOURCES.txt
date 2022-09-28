@@ -1,0 +1,11 @@
+jit.cpp
+setup.py
+/media/seu/wyk/Recon/DTV-ivr/Geometry/StandardGeometry/plug/jit.cpp
+/media/seu/wyk/Recon/DTV-ivr/Geometry/StandardGeometry/plug/kernel/forwardKernel.cu
+JITStandardGeometry.egg-info/PKG-INFO
+JITStandardGeometry.egg-info/SOURCES.txt
+JITStandardGeometry.egg-info/dependency_links.txt
+JITStandardGeometry.egg-info/not-zip-safe
+JITStandardGeometry.egg-info/top_level.txt
+kernel/backwardKernel.cu
+kernel/forwardKernel.cu
