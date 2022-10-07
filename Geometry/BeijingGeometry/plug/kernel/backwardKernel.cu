@@ -1,5 +1,5 @@
 /**
-* 基于标准圆轨迹定义可以用于pytorch深度学习，迭代GPU加速和C++部署的反投影算子
+* 基于复眼24系统定义可以用于pytorch深度学习，迭代GPU加速和C++部署的反投影算子
 * Author: 姚维国，马春良，王硕然，王煜康
 * Note：王煜康
 **/
@@ -7,7 +7,6 @@
 #include <cuda.h>
 #include <cuda_runtime.h>
 #include "../include/helper_math.h"
-#include "../include/helper_geometry.h"
 
 #define BLOCKSIZE_X 16
 #define BLOCKSIZE_Y 16

@@ -1,4 +1,4 @@
 epoch: 5001
-debug: /home/nv/wyk/raws/temp/
+debug: /media/seu/wyk/Recon/DTV/results
 debugfeqs: 100
 device: cuda:0

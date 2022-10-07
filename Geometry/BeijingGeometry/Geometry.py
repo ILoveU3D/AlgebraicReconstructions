@@ -9,7 +9,7 @@ from ..Geometry import Geometry
 
 params = yaml.load(open(os.path.join(os.path.dirname(__file__), r"params.yaml")), yaml.FullLoader)
 # projector = load(name="beijing", extra_include_paths=["include"],
-#                  sources=[os.path.join(os.path.dirname(__file__), "plug/kernel/cone_project_cuda.cpp"),
+#                  sources=[os.path.join(os.path.dirname(__file__), "plug/kernel/jit.cpp"),
 #                         os.path.join(os.path.dirname(__file__),"plug/kernel/cone_project_cuda_kernel.cu")])
 class BeijingGeometry(Geometry):
     def __init__(self):

@@ -1,10 +1,9 @@
 from abc import ABCMeta, abstractmethod
 
 class Geometry(metaclass=ABCMeta):
-    def __init__(self, volumeSize:list, detectorSize:list, H):
+    def __init__(self, volumeSize, detectorSize):
         self.volumeSize = volumeSize
         self.detectorSize = detectorSize
-        self.H = H
 
     @abstractmethod
     def fp(self, volume, device):

@@ -1,10 +1,10 @@
 angles: 48
 detectorSize:
-  - 511
-  - 511
+  - 288
+  - 28
 volumeSize:
   - 256
   - 256
   - 16
 SID: 1000
-SOD: 0
+SDD: 2000

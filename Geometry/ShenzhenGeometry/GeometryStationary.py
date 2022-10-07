@@ -30,7 +30,8 @@ class ShenzhenGeometry(Geometry):
         volumeGeometry = astra.create_vol_geom(volumeSize[0],volumeSize[1],volumeSize[2])
         projector = astra.create_projector('cuda3d',projectorGeometry,volumeGeometry)
         detectorSize.append(anglesNum)
-        super(ShenzhenGeometry, self).__init__(volumeSize, detectorSize, astra.OpTomo(projector))
+        super(ShenzhenGeometry, self).__init__(volumeSize, detectorSize)
+        self.H = astra.OpTomo(projector)
         self.weight = self.H.T * self.H * np.ones(self.volumeSize).flatten() + 1
         self.torchVolumeSize = [1, volumeSize[2], volumeSize[1], volumeSize[0]]
         self.torchDetectorSize = [1, detectorSize[2], detectorSize[1], detectorSize[0]]
