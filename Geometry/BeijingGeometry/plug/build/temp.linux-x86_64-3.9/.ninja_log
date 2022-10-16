@@ -1,0 +1,24 @@
+# ninja log v5
+0	9883	1665471892402680500	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/jit.o	f950b5e64b588242
+5	9553	1665471921903916700	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/jit.o	f950b5e64b588242
+6	29642	1665472383960304700	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29419	1665472850129193000	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29694	1665473393490680000	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+7	29934	1665473702579870900	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29677	1665474002889217600	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	30024	1665475405139074700	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	30174	1665476033480988100	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+6	29141	1665476358957757600	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29903	1665476464185291400	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+6	29304	1665476705768213600	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	30243	1665476897557162100	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29678	1665477071918278600	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	30045	1665477217481790400	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29218	1665477319457539200	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	30151	1665477613382167600	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29869	1665479105293155900	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29619	1665479393071267300	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29508	1665479590497809100	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29601	1665479748068535000	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29366	1665480525084787200	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321
+5	29904	1665480626931377500	/media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	ff5794cd1510f321

@@ -1,7 +1,7 @@
-angles: 48
+angles: 32
 detectorSize:
-  - 288
-  - 28
+  - 2940
+  - 2304
 volumeSize:
   - 256
   - 256

@@ -40,3 +40,7 @@
 5	28936	1664376336661352800	/media/seu/wyk/Recon/DTV-ivr/Geometry/StandardGeometry/plug/build/temp.linux-x86_64-3.9/kernel/backwardKernel.o	7a16aad0bb6888d5
 6	29272	1664376526678907700	/media/seu/wyk/Recon/DTV-ivr/Geometry/StandardGeometry/plug/build/temp.linux-x86_64-3.9/kernel/backwardKernel.o	7a16aad0bb6888d5
 5	28695	1664376695066801600	/media/seu/wyk/Recon/DTV-ivr/Geometry/StandardGeometry/plug/build/temp.linux-x86_64-3.9/kernel/backwardKernel.o	7a16aad0bb6888d5
+5	10194	1665479188805908300	/media/seu/wyk/Recon/DTV-ivr/Geometry/StandardGeometry/plug/build/temp.linux-x86_64-3.9/jit.o	d497e8566f78f708
+5	32275	1665479210888449000	/media/seu/wyk/Recon/DTV-ivr/Geometry/StandardGeometry/plug/build/temp.linux-x86_64-3.9/kernel/backwardKernel.o	7a16aad0bb6888d5
+5	32673	1665479211286688600	/media/seu/wyk/Recon/DTV-ivr/Geometry/StandardGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	3fc0867ab0c4c343
+6	30627	1665479335818948300	/media/seu/wyk/Recon/DTV-ivr/Geometry/StandardGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o	3fc0867ab0c4c343

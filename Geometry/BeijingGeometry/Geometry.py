@@ -3,7 +3,7 @@ import yaml
 import astra
 import torch
 import numpy as np
-import ConeProjectZ_cuda as projector
+import JITBeijingGeometry as projector
 from torch.utils.cpp_extension import load
 from ..Geometry import Geometry
 
@@ -14,38 +14,18 @@ params = yaml.load(open(os.path.join(os.path.dirname(__file__), r"params.yaml"))
 class BeijingGeometry(Geometry):
     def __init__(self):
         anglesNum = params["anglesNum"]
-        files = os.listdir(params["anglesRoot"])
-        files = sorted(files, key=lambda x:float(x.split('_')[2]))
-        angles = np.array([float(item.split('_')[2]) for item in files]) * np.pi / 180 - np.pi / 2
-        log = open(os.path.join(params["anglesRoot"], "..", "files.txt"), 'w')
-        detectorSize = params["detectorSize"]
-        volumeSize = params["volumeSize"]
-        super(BeijingGeometry, self).__init__(volumeSize, detectorSize, None)
-        self.torchVolumeSize = [1, volumeSize[2], volumeSize[1], volumeSize[0]]
-        self.torchDetectorSize = [1, anglesNum, detectorSize[1], detectorSize[0]]
-        self.angleNum = anglesNum
-        self.ray = np.zeros(anglesNum*2, dtype=np.float32)
-        step = len(angles) / anglesNum
-        coor = 0
-        s = 0
-        while s < anglesNum:
-            self.ray[s * 2] = np.cos(angles[int(coor)])
-            self.ray[s * 2 + 1] = np.sin(angles[int(coor)])
-            log.write(files[int(coor)] + '\n')
-            s += 1
-            coor += step
-        log.close()
-        ray = torch.from_numpy(self.ray).to(0)
-        self.weight = projector.forward(torch.ones(self.torchVolumeSize).cuda(), ray, self.angleNum, 512, 512, 72, -255, -255, -36, 769, 72, -384, -36,
-                                 708 / 1.06, 1143 / 1.06, -27.5576 - 36, -100 / 1.06, 1, 0)[0]
-        self.weight = projector.backward(self.weight, ray, self.angleNum, 512, 512, 72, -255, -255, -36, 769, 72, -384, -36,
-                                    708 / 1.06, 1143 / 1.06, -27.5576 - 36, -100 / 1.06, 1, 0)[0]
+        self.angles = torch.from_numpy(np.linspace(0,360,anglesNum,False))
+        detectorSize = torch.tensor(params["detectorSize"])
+        volumeSize = torch.tensor(params["volumeSize"])
+        super(BeijingGeometry, self).__init__(volumeSize, detectorSize)
+        self.SID = params["SID"]
+        self.SDD = params["SDD"]
+        self.pixelSpacing = params["pixelSpacing"]
+        self.offset = params["zOffset"]
 
     def fp(self, volume, device):
-        ray = torch.from_numpy(self.ray).to(device)
-        sino = projector.forward(volume, ray, self.angleNum, 512, 512, 72, -255, -255, -36, 769, 72, -384, -36,
-                                              708 / 1.06, 1143 / 1.06, -27.5576 - 36, -100 / 1.06, 1, int(device[-1]))[0]
-        return sino.reshape(self.torchDetectorSize)
+        sino = projector.forward(volume, self.angles.to(device), self.volumeSize.to(device), self.detectorSize.to(device), self.SID, self.SDD, self.offset, self.pixelSpacing, int(device[-1]),1,1)
+        return sino
 
     def bp(self, sino, device):
         ray = torch.from_numpy(self.ray).to(device)

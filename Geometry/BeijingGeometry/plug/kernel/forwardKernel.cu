@@ -20,7 +20,7 @@
 texture<float, cudaTextureType3D, cudaReadModeElementType> volumeTexture;
 
 __global__ void forwardKernel(float* sino, float angle,
- const uint3 volumeSize, const float3 volumeCenter, const uint2 detectorSize, const float2 detectorCenter, const float sid, const float sdd, const uint index){
+ const uint3 volumeSize, const float3 volumeCenter, const uint2 detectorSize, const float2 detectorCenter, const float sid, const float sdd, const float offset, const float volumeOffset, const float sampleInterval, const float sliceInterval, const uint index){
     // 像素驱动，此核代表一个探测器像素
     uint2 detectorIdx = make_uint2(blockIdx.x * blockDim.x + threadIdx.x,  blockIdx.y* blockDim.y + threadIdx.y);
     if (detectorIdx.x >= detectorSize.x || detectorIdx.y >= detectorSize.y)
@@ -31,10 +31,12 @@ __global__ void forwardKernel(float* sino, float angle,
     float2 ex = make_float2(cos(angle), sin(angle));
     float2 ey = make_float2(-ex.y, ex.x);
     float detectorX = detectorIdx.x + detectorCenter.x;
-    float detectorY = detectorIdx.y + detectorCenter.y;
+    float detectorY = detectorIdx.y + detectorCenter.y - offset;
 
     // 计算得到像素射线方向和起始点
-    float2 world = ex * sdd + ey * detectorX;
+    float arc = sdd - sid;
+    float arcAngle = detectorX / arc;
+    float2 world = ex * (sid + arc * cos(arcAngle)) + ey * arc * sin(arcAngle);
     float3 rayVector = make_float3(world, detectorY);
     rayVector = normalize(rayVector);
     float3 sourcePoint = make_float3(-ex * sid, 0);
@@ -58,16 +60,14 @@ __global__ void forwardKernel(float* sino, float angle,
     float max_alpha = fmax(alpha0, alpha1) + 3;
 
     float px, py, pz;
-    float sampleInterval = sid / sdd;
-
     while (min_alpha < max_alpha)
     {
         px = sourcePoint.x + min_alpha * rayVector.x;
         py = sourcePoint.y + min_alpha * rayVector.y;
-        pz = sourcePoint.z + min_alpha * rayVector.z;
+        pz = sourcePoint.z + min_alpha * rayVector.z + volumeOffset;
         px /= sampleInterval;
         py /= sampleInterval;
-        pz /= sampleInterval;
+        pz /= sliceInterval;
         px -= volumeCenter.x;
         py -= volumeCenter.y;
         pz -= volumeCenter.z;
@@ -80,7 +80,7 @@ __global__ void forwardKernel(float* sino, float angle,
     sino[sinogramIdx] = pixel;
 }
 
-torch::Tensor forward(torch::Tensor volume, torch::Tensor angles, torch::Tensor _volumeSize, torch::Tensor _detectorSize, const float sid, const float sdd, const long device, float sampleInterval = -1, float sliceInterval = -1){
+torch::Tensor forward(torch::Tensor volume, torch::Tensor angles, torch::Tensor _volumeSize, torch::Tensor _detectorSize, float sid, float sdd, float offset, const float pixelSpacing, const long device, float sampleInterval = -1, float sliceInterval = -1){
     CHECK_INPUT(volume);
     CHECK_INPUT(angles);
     CHECK_INPUT(_volumeSize);
@@ -108,13 +108,20 @@ torch::Tensor forward(torch::Tensor volume, torch::Tensor angles, torch::Tensor 
     float2 detectorCenter = make_float2(detectorSize) / -2.0;
 
     //计算默认的sampleInterval和sliceInterval
-    if(sampleInterval == -1){
-
-    }
-
-    if(sliceInterval == -1){
-
-    }
+    sdd /= pixelSpacing;
+    sid /= pixelSpacing;
+    offset /= pixelSpacing;
+    float thetaDec = detectorSize.x / (2*(sdd - sid));
+    float BG = (sdd - sid) * sin(thetaDec);
+    float AG = (sdd - sid) * cos(thetaDec) + sid;
+    float AB = sqrt(BG * BG + AG * AG);
+    float radiusTemp = BG/AB*sid*2;
+    sampleInterval = sampleInterval == -1?radiusTemp/volumeSize.x:sampleInterval;
+    float z0 = offset * sid / sdd;
+    float z1 = (sid - radiusTemp/2) * (offset - detectorSize.y/2) / sdd;
+    float z2 = (sid + radiusTemp/2) * (offset + detectorSize.y/2) / sdd;
+    sliceInterval = sliceInterval == -1?(z2 - z1)/volumeSize.z:sliceInterval;
+    float volumeOffset = offset * sid / sdd + (z1 + z2) / 2 - z0;
 
     for(int batch = 0;batch < volume.size(0); batch++){
         float* volumePtrPitch = volumePtr + volumeSize.x * volumeSize.y * volumeSize.z * batch;
@@ -136,7 +143,7 @@ torch::Tensor forward(torch::Tensor volume, torch::Tensor angles, torch::Tensor 
         const dim3 blockSize = dim3(BLOCKSIZE_X, BLOCKSIZE_Y, 1 );
         const dim3 gridSize = dim3(detectorSize.x / blockSize.x + 1, detectorSize.y / blockSize.y + 1 , 1);
         for (int angle = 0; angle < angles.size(0); angle++){
-           forwardKernel<<<gridSize, blockSize>>>(outPtrPitch, angles[angle].item<float>(), volumeSize, volumeCenter, detectorSize, detectorCenter, sid, sdd, angle);
+           forwardKernel<<<gridSize, blockSize>>>(outPtrPitch, angles[angle].item<float>(), volumeSize, volumeCenter, detectorSize, detectorCenter, sid, sdd, offset, volumeOffset, sampleInterval, sliceInterval, angle);
         }
 
       // 解绑纹理

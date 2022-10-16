@@ -1,13 +1,13 @@
-SID: 1143
-SOD: 708
-pixelSpacing: 0.265
+SDD: 1143
+SID: 708
+pixelSpacing: 1.06
 zOffset: 100
 detectorSize:
-  - 769
+  - 768
   - 72
 volumeSize:
-  - 512
-  - 512
-  - 72
+  - 256
+  - 256
+  - 16
 anglesRoot: /home/nv/mcl/data/lung/zhiyuanzhe/corr/0_binning
-anglesNum: 360
+anglesNum: 96

@@ -19,7 +19,7 @@
 // 存储体块的纹理内存
 texture<float, cudaTextureType3D, cudaReadModeElementType> volumeTexture;
 
-__global__ void forwardKernel(float* sino, float angle,
+__global__ void forwardKernel(float* sino,float angle,
  const uint3 volumeSize, const float3 volumeCenter, const uint2 detectorSize, const float2 detectorCenter, const float sid, const float sdd, const uint index){
     // 像素驱动，此核代表一个探测器像素
     uint2 detectorIdx = make_uint2(blockIdx.x * blockDim.x + threadIdx.x,  blockIdx.y* blockDim.y + threadIdx.y);

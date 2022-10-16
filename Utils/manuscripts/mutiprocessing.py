@@ -1,17 +1,21 @@
 import multiprocessing
 import time
 import numpy as np
+from Geometry.ShenzhenGeometry.GeometryStationary import ShenzhenGeometry
 
-def fun(a:np.ndarray,b:np.ndarray):
-    return a * b
 
-tic = time.time()
+def fun(p:np.ndarray):
+    geometry = ShenzhenGeometry()
+    return geometry.H * p.flatten()
+
 pool = multiprocessing.Pool(processes=4)
-iterable = ((np.full([1,3],1), np.full([1,3],2)),
-            (np.full([1,3],3), np.full([1,3],4)),
-            (np.full([1,3],5), np.full([1,3],6)))
+iterable = (
+    (np.ones([32,32,4]),),
+    (np.ones([32,32,4]),),
+    (np.ones([32,32,4]),),
+)
 result = pool.starmap_async(fun, iterable).get()
 pool.close()
 pool.join()
-print(time.time() - tic)
-print(result, sum(result))
+
+sum(result).tofile("/media/seu/wyk/Data/raws/r.raw")
