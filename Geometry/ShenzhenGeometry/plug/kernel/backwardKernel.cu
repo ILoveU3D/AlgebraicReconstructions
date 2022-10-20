@@ -14,13 +14,27 @@
 // 弦图的纹理内存
 texture<float, cudaTextureType3D, cudaReadModeElementType> sinoTexture;
 
-__global__ void backwardKernel(float* volume, const uint3 volumeSize, const uint2 detectorSize, const float* projectVector, const uint index){
+__global__ void backwardKernel(float* volume, const uint3 volumeSize, const uint2 detectorSize, const float* projectVector, const uint index,const int anglesNum,const float3 volumeCenter, const float2 detectorCenter){
     // 体素驱动，代表一个体素点
    uint2 volumeIdx = make_uint2(blockIdx.x*blockDim.x + threadIdx.x, blockIdx.y*blockDim.y + threadIdx.y);
    if(volumeIdx.x >= volumeSize.x  || volumeIdx.y >= volumeSize.y )
       return;
-
-    return;
+   float3 sourcePosition = make_float3(projectVector[0], projectVector[1], projectVector[2]);
+   float3 detectorPosition = make_float3(projectVector[3], projectVector[4], projectVector[5]);
+   float3 u = make_float3(projectVector[6], projectVector[7], projectVector[8]);
+   float3 v = make_float3(projectVector[9], projectVector[10], projectVector[11]);
+   float sampleInterval = fabs(sourcePosition.z)/fabs(sourcePosition.z-detectorPosition.z);
+   for (int k=0;k<volumeSize.z;k++)
+   {
+        const float3 coordinates = make_float3(volumeCenter.x + volumeIdx.x, volumeCenter.y + volumeIdx.y,volumeCenter.z+k);
+        float3 normVector=cross(u,v);
+        float3 intersection=intersectLines3D(sourcePosition,coordinates,detectorPosition,detectorPosition+normVector);
+        float detectorX=dot(intersection-detectorPosition,u)-detectorCenter.x;
+        float detectorY=dot(intersection-detectorPosition,v)-detectorCenter.y;
+        int idx = k * volumeSize.x * volumeSize.y + volumeIdx.y * volumeSize.x + volumeIdx.x;
+        float val = tex3D(sinoTexture, detectorX + 0.5f, detectorY + 0.5f, index+0.5f);
+        volume[idx] += val * 2*PI / anglesNum;
+   }
 /*
     // 计算得到探测器像素坐标x,z
    float sampleInterval = sid / sdd;
@@ -76,7 +90,8 @@ torch::Tensor backward(torch::Tensor sino, torch::Tensor _volumeSize, torch::Ten
     // 体块和探测器的大小位置向量化
     uint3 volumeSize = make_uint3(_volumeSize[0].item<int>(), _volumeSize[1].item<int>(), _volumeSize[2].item<int>());
     uint2 detectorSize = make_uint2(_detectorSize[0].item<int>(), _detectorSize[1].item<int>());
-
+    float3 volumeCenter = make_float3(volumeSize) / -2.0;
+    float2 detectorCenter = make_float2(detectorSize) / -2.0;
     for(int batch = 0;batch < sino.size(0); batch++){
         float* sinoPtrPitch = sinoPtr + detectorSize.x * detectorSize.y * angles * batch;
         float* outPtrPitch = outPtr + volumeSize.x * volumeSize.y * volumeSize.z * batch;
@@ -97,7 +112,7 @@ torch::Tensor backward(torch::Tensor sino, torch::Tensor _volumeSize, torch::Ten
         const dim3 blockSize = dim3(BLOCKSIZE_X, BLOCKSIZE_Y, 1);
         const dim3 gridSize = dim3(volumeSize.x / blockSize.x + 1, volumeSize.y / blockSize.y + 1 , 1);
         for (int angle = 0; angle < angles; angle++){
-           backwardKernel<<<gridSize, blockSize>>>(outPtrPitch, volumeSize, detectorSize, (float*)projectVector[angle].data<float>(), angle);
+           backwardKernel<<<gridSize, blockSize>>>(outPtrPitch, volumeSize, detectorSize, (float*)projectVector[angle].data<float>(), angle,angles,volumeCenter,detectorCenter);
         }
 
       // 解绑纹理

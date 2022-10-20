@@ -1445,16 +1445,4 @@ inline __device__ __host__ float4 smoothstep(float4 a, float4 b, float4 x)
     float4 y = clamp((x - a) / (b - a), 0.0f, 1.0f);
     return (y*y*(make_float4(3.0f) - (make_float4(2.0f)*y)));
 }
-inline __device__ float sum(float *cache, int id)
-{
-	int i = blockDim.x / 2;
-	while (i != 0) {
-		if (id < i) {
-			cache[id] += cache[id + i];
-		}
-		__syncthreads();
-		i /= 2;
-	}
-	return cache[0];
-}
 #endif

@@ -3,9 +3,11 @@
 #include <cuda_runtime.h>
 #include <stdio.h>
 #include "../include/helper_math.h"
+#include "../include/helper_geometry.h"
 
-#define BLOCKSIZE_X 16
-#define BLOCKSIZE_Y 16
+#define BLOCK_X 16
+#define BLOCK_Y 16
+#define BLOCK_Z 1
 #define PI 3.14159265359
 #define CHECK_CUDA(x) AT_ASSERTM(x.type().is_cuda(), #x " must be a CUDA tensor")
 #define CHECK_CONTIGUOUS(x) AT_ASSERTM(x.is_contiguous(), #x " must be contiguous")
@@ -16,13 +18,15 @@ texture<float, cudaTextureType3D, cudaReadModeElementType> volumeTexture;
 
 __global__ void forwardKernel(float* sino, const uint3 volumeSize, const float3 volumeCenter, const uint2 detectorSize, const float2 detectorCenter, const float* projectVector, const uint index, const uint systemNum){
     // 像素驱动，此核代表一个探测器像素
-    uint2 detectorIdx = make_uint2(blockIdx.x * blockDim.x + threadIdx.x,  blockIdx.y* blockDim.y + threadIdx.y);
-    if (detectorIdx.x >= detectorSize.x || detectorIdx.y >= detectorSize.y)
+    uint3 detectorIdx = make_uint3(blockIdx.x*blockDim.x+threadIdx.x, blockIdx.y*blockDim.y+threadIdx.y, blockIdx.z*blockDim.z+threadIdx.z);
+    if (detectorIdx.x >= detectorSize.x || detectorIdx.y >= detectorSize.y || detectorIdx.z >= systemNum){
         return;
+    }
+
     float detectorX = detectorIdx.x + detectorCenter.x;
     float detectorY = detectorIdx.y + detectorCenter.y;
 
-    unsigned projectVectorIdx = blockDim.z * 12;
+    unsigned projectVectorIdx = detectorIdx.z * 12;
     float3 sourcePosition = make_float3(projectVector[projectVectorIdx], projectVector[projectVectorIdx+1], projectVector[projectVectorIdx+2]);
     float3 detectorPosition = make_float3(projectVector[projectVectorIdx+3], projectVector[projectVectorIdx+4], projectVector[projectVectorIdx+5]);
     float3 u = make_float3(projectVector[projectVectorIdx+6], projectVector[projectVectorIdx+7], projectVector[projectVectorIdx+8]);
@@ -81,9 +85,10 @@ __global__ void forwardKernel(float* sino, const uint3 volumeSize, const float3 
     }
     pixel *= sampleInterval / systemNum;
 
-    unsigned sinogramIdx = index * detectorSize.x * detectorSize.y + (detectorIdx.y) * detectorSize.x + (detectorIdx.x);
+    unsigned sinogramIdx = index * detectorSize.x * detectorSize.y + detectorIdx.y * detectorSize.x + detectorIdx.x;
 
-    sino[sinogramIdx] += pixel;
+    atomicAdd(&sino[sinogramIdx], pixel);
+//    sino[sinogramIdx] = pixel;
 }
 
 torch::Tensor forward(torch::Tensor volume, torch::Tensor _volumeSize, torch::Tensor _detectorSize, torch::Tensor projectVector, const int systemNum, const long device){
@@ -132,8 +137,10 @@ torch::Tensor forward(torch::Tensor volume, torch::Tensor _volumeSize, torch::Te
         cudaBindTextureToArray(volumeTexture, volumeArray, channelDesc);
 
         // 以角度为单位做探测器像素驱动的正投影
-        const dim3 blockSize = dim3(BLOCKSIZE_X, BLOCKSIZE_Y, 1 );
-        const dim3 gridSize = dim3(detectorSize.x / blockSize.x + 1, detectorSize.y / blockSize.y + 1 , systemNum);
+        const dim3 blockSize = dim3(BLOCK_X, BLOCK_Y, BLOCK_Z);
+        const dim3 gridSize = dim3(detectorSize.x / BLOCK_X + 1, detectorSize.y / BLOCK_Y + 1, systemNum / BLOCK_Z + 1);
+        printf("thread:(%d %d %d)\n",blockSize.x,blockSize.y,blockSize.z);
+        printf("block:(%d %d %d)\n",gridSize.x,gridSize.y,gridSize.z);
         auto projVec = projectVector.reshape({angles, systemNum * 12});
         for (int angle = 0; angle < angles; angle++){
            forwardKernel<<<gridSize, blockSize>>>(outPtrPitch, volumeSize, volumeCenter, detectorSize, detectorCenter, (float*)projVec[angle].data<float>(), angle, systemNum);

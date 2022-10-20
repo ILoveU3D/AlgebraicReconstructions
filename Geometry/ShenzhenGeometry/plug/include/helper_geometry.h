@@ -40,4 +40,43 @@ inline __device__ float2 intersectLines2D(float2 p1, float2 p2, float2 p3, float
     float2 isectPt = {x, y};
     return isectPt;
 }
+
+inline __device__ float3 intersectLines3D(float3 p1, float3 p2, float3 p3, float3 p4)
+{
+    // line : p1, p2
+    // plane: p3,  plane normal vector: p3-p4
+    /* line equation:
+     x=p1.x+t*(p1.x-p2.x); y=p1.y+t*(p1.y-p2.y)
+     z=p1.z+t*(p1.z-p2.z)
+     plane: equation:
+     (x-p3.x)*(p3.x-p4.x)+(y-p3.y)*(p3.y-p4.y)+(z-p3.z)*(p3.z-p4.z)=0;
+    */
+    float3 normalVector=p3-p4;
+    float3 lineVector=p1-p2;
+    float dNom=dot(normalVector,lineVector);
+    if (dNom < 0.000001f && dNom > -0.000001f)
+    {
+        float3 retValue = {NAN, NAN,NAN};
+        return retValue;
+    }
+    float t=dot(p3-p1,normalVector)/dNom;
+    float3 retValue;
+    retValue.x=p1.x+t*(p1.x-p2.x); retValue.y=p1.y+t*(p1.y-p2.y);
+    retValue.z=p1.z+t*(p1.z-p2.z);
+    return retValue;
+}
+
+inline __device__ float sum(float *cache, int id)
+{
+	int i = blockDim.x / 2;
+	while (i != 0) {
+		if (id < i) {
+			cache[id] += cache[id + i];
+		}
+		__syncthreads();
+		i /= 2;
+	}
+	__syncthreads();
+	return cache[0];
+}
 #endif
