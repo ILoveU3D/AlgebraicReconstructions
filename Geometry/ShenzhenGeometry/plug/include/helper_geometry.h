@@ -68,7 +68,8 @@ inline __device__ float3 intersectLines3D(float3 p1, float3 p2, float3 p3, float
 
 inline __device__ float sum(float *cache, int id)
 {
-	int i = blockDim.x / 2;
+    __syncthreads();
+	int i = blockDim.z / 2;
 	while (i != 0) {
 		if (id < i) {
 			cache[id] += cache[id + i];
@@ -76,7 +77,6 @@ inline __device__ float sum(float *cache, int id)
 		__syncthreads();
 		i /= 2;
 	}
-	__syncthreads();
 	return cache[0];
 }
 #endif

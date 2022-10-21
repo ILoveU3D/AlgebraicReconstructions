@@ -14,11 +14,12 @@ params = yaml.load(open(os.path.join(os.path.dirname(__file__), r"params.yaml"))
 class ShenzhenGeometry(Geometry):
     def __init__(self):
         anglesNum = params["anglesNum"]
-        parameters = scipy.io.loadmat(os.path.join(params["root"], "para.mat"))
-        det = np.transpose(parameters['det']).T
-        source = np.transpose(parameters['source']).T
-        u = np.transpose(parameters['u']).T
-        v = np.transpose(parameters['v']).T
+        # parameters = scipy.io.loadmat(os.path.join(params["root"], "para.mat"))
+        parameters = h5py.File(os.path.join(params["root"], "Para.mat"), 'r')
+        det = np.transpose(parameters['det'])
+        source = np.transpose(parameters['source'])
+        u = np.transpose(parameters['u'])
+        v = np.transpose(parameters['v'])
         self.projectVector = np.zeros((anglesNum, 12), dtype=np.float32)
         for i in range(anglesNum):
             self.projectVector[i, 0:3] = source[:, i]
@@ -38,5 +39,5 @@ class ShenzhenGeometry(Geometry):
         return sino
 
     def bp(self, sino, device):
-        volume = projector.backward(sino, self.volumeSize.to(device), self.detectorSize.to(device), self.projectVector.to(device), int(device[-1]))
+        volume = projector.backward(sino, self.volumeSize.to(device), self.detectorSize.to(device), self.projectVector.to(device), 1, int(device[-1]))
         return volume

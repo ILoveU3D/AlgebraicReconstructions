@@ -7,7 +7,7 @@
 
 #define BLOCK_X 16
 #define BLOCK_Y 16
-#define BLOCK_Z 1
+#define BLOCK_Z 4
 #define PI 3.14159265359
 #define CHECK_CUDA(x) AT_ASSERTM(x.type().is_cuda(), #x " must be a CUDA tensor")
 #define CHECK_CONTIGUOUS(x) AT_ASSERTM(x.is_contiguous(), #x " must be contiguous")
@@ -17,6 +17,7 @@
 texture<float, cudaTextureType3D, cudaReadModeElementType> volumeTexture;
 
 __global__ void forwardKernel(float* sino, const uint3 volumeSize, const float3 volumeCenter, const uint2 detectorSize, const float2 detectorCenter, const float* projectVector, const uint index, const uint systemNum){
+    __shared__ float cache[BLOCK_Z];
     // 像素驱动，此核代表一个探测器像素
     uint3 detectorIdx = make_uint3(blockIdx.x*blockDim.x+threadIdx.x, blockIdx.y*blockDim.y+threadIdx.y, blockIdx.z*blockDim.z+threadIdx.z);
     if (detectorIdx.x >= detectorSize.x || detectorIdx.y >= detectorSize.y || detectorIdx.z >= systemNum){
@@ -84,11 +85,13 @@ __global__ void forwardKernel(float* sino, const uint3 volumeSize, const float3 
         min_alpha += sampleInterval;
     }
     pixel *= sampleInterval / systemNum;
-
-    unsigned sinogramIdx = index * detectorSize.x * detectorSize.y + detectorIdx.y * detectorSize.x + detectorIdx.x;
-
-    atomicAdd(&sino[sinogramIdx], pixel);
+    cache[threadIdx.z] = pixel;
+    sum(cache, threadIdx.z);
+    if(threadIdx.z == 0){
+        unsigned sinogramIdx = index * detectorSize.x * detectorSize.y + detectorIdx.y * detectorSize.x + detectorIdx.x;
+        atomicAdd(&sino[sinogramIdx], cache[0]);
 //    sino[sinogramIdx] = pixel;
+    }
 }
 
 torch::Tensor forward(torch::Tensor volume, torch::Tensor _volumeSize, torch::Tensor _detectorSize, torch::Tensor projectVector, const int systemNum, const long device){
