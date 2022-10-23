@@ -26,13 +26,16 @@ class ShenzhenGeometry(Geometry):
             self.projectVector[i, 3:6] = det[:, i]
             self.projectVector[i, 6:9] = u[:, i]
             self.projectVector[i, 9:12] = v[:, i]
-        self.projectVector[:, [0, 1, 3, 4, 6, 7, 9, 10]] /= 2
-        self.projectVector[:, [2, 5]] += 300
-        self.projectVector[:, [2, 5]] /= 2
+        self.projectVector[:, [0, 1, 3, 4, 6, 7, 9, 10]] /= 3
+        self.projectVector[:, [2, 5]] += 0
+        self.projectVector[:, [2, 5]] /= 3
         self.projectVector = torch.from_numpy(self.projectVector)
         detectorSize = torch.tensor(params["detectorSize"], dtype=torch.int32)
         volumeSize = torch.tensor(params["volumeSize"], dtype=torch.int32)
         super(ShenzhenGeometry, self).__init__(volumeSize, detectorSize)
+        self.weight = torch.ones([1,1,volumeSize[2],volumeSize[1],volumeSize[0]])
+        self.weight = projector.forward(self.weight.to(0), self.volumeSize.to(0), self.detectorSize.to(0), self.projectVector.to(0), 1, 0)
+        self.weight = projector.backward(self.weight, self.volumeSize.to(0), self.detectorSize.to(0), self.projectVector.to(0), 1, 0) + 1
 
     def fp(self, volume, device):
         sino = projector.forward(volume, self.volumeSize.to(device), self.detectorSize.to(device), self.projectVector.to(device), 1, int(device[-1]))
@@ -40,4 +43,5 @@ class ShenzhenGeometry(Geometry):
 
     def bp(self, sino, device):
         volume = projector.backward(sino, self.volumeSize.to(device), self.detectorSize.to(device), self.projectVector.to(device), 1, int(device[-1]))
+        volume /= self.weight.to(device)
         return volume
