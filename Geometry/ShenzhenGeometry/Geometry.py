@@ -26,9 +26,9 @@ class ShenzhenGeometry(Geometry):
             self.projectVector[i, 3:6] = det[:, i]
             self.projectVector[i, 6:9] = u[:, i]
             self.projectVector[i, 9:12] = v[:, i]
-        self.projectVector[:, [0, 1, 3, 4, 6, 7, 9, 10]] /= 3
+        self.projectVector[:, [0, 1, 3, 4, 6, 7, 9, 10]] /= 1
         self.projectVector[:, [2, 5]] += 0
-        self.projectVector[:, [2, 5]] /= 3
+        self.projectVector[:, [2, 5]] /= 1
         self.projectVector = torch.from_numpy(self.projectVector)
         detectorSize = torch.tensor(params["detectorSize"], dtype=torch.int32)
         volumeSize = torch.tensor(params["volumeSize"], dtype=torch.int32)
