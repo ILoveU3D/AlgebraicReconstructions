@@ -1,13 +1,9 @@
-SDD: 1143
-SID: 708
-pixelSpacing: 1.06
-zOffset: 100
+root: /media/seu/wyk/beijing/
+anglesNum: 23040
 detectorSize:
-  - 768
+  - 40
   - 72
 volumeSize:
   - 256
   - 256
-  - 16
-anglesRoot: /home/nv/mcl/data/lung/zhiyuanzhe/corr/0_binning
-anglesNum: 96
+  - 72

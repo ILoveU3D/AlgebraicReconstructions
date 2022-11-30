@@ -21,6 +21,7 @@ rule cuda_compile
 
 
 build /media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/jit.o: compile /media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/jit.cpp
+build /media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/backwardKernel.o: cuda_compile /media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/kernel/backwardKernel.cu
 build /media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/build/temp.linux-x86_64-3.9/kernel/forwardKernel.o: cuda_compile /media/seu/wyk/Recon/DTV-ivr/Geometry/BeijingGeometry/plug/kernel/forwardKernel.cu
 
 

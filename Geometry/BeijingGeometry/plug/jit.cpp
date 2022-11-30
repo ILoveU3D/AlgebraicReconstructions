@@ -4,5 +4,5 @@
 
 PYBIND11_MODULE(TORCH_EXTENSION_NAME, m) {
   m.def("forward", &forward, "Compound eyes forward (CUDA)");
-//  m.def("backward", &backward, "Compound eyes backward (CUDA)");
+  m.def("backward", &backward, "Compound eyes backward (CUDA)");
 }

@@ -5,7 +5,7 @@ setup(name="JITBeijingGeometry",
       include_paths=["include"], ext_modules=[
         CUDAExtension(
             "JITBeijingGeometry",
-            ["jit.cpp", "kernel/forwardKernel.cu"]
+            ["jit.cpp", "kernel/forwardKernel.cu", "kernel/backwardKernel.cu"]
         )
     ],
       zip_safe=False,

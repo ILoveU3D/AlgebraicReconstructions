@@ -1,0 +1,82 @@
+/*
+ * Copyright [2019] [Christopher Syben]
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ * 
+ * Computes line intersection for projector kernel
+ * Implementation is adapted from CONRAD
+ * PYRO-NN is developed as an Open Source project under the Apache License, Version 2.0.
+*/
+#pragma once
+#ifndef HELPER_GEOMETRY_GPU_H
+#define HELPER_GEOMETRY_GPU_H
+
+#include "helper_math.h"
+
+inline __device__ float2 intersectLines2D(float2 p1, float2 p2, float2 p3, float2 p4)
+{
+    float dNom = (p1.x - p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x - p4.x);
+
+    if (dNom < 0.000001f && dNom > -0.000001f)
+    {
+        float2 retValue = {NAN, NAN};
+        return retValue;
+    }
+    float x = (p1.x * p2.y - p1.y * p2.x) * (p3.x - p4.x) - (p1.x - p2.x) * (p3.x * p4.y - p3.y * p4.x);
+    float y = (p1.x * p2.y - p1.y * p2.x) * (p3.y - p4.y) - (p1.y - p2.y) * (p3.x * p4.y - p3.y * p4.x);
+
+    x /= dNom;
+    y /= dNom;
+    float2 isectPt = {x, y};
+    return isectPt;
+}
+
+inline __device__ float3 intersectLines3D(float3 p1, float3 p2, float3 p3, float3 p4)
+{
+    // line : p1, p2
+    // plane: p3,  plane normal vector: p3-p4
+    /* line equation:
+     x=p1.x+t*(p1.x-p2.x); y=p1.y+t*(p1.y-p2.y)
+     z=p1.z+t*(p1.z-p2.z)
+     plane: equation:
+     (x-p3.x)*(p3.x-p4.x)+(y-p3.y)*(p3.y-p4.y)+(z-p3.z)*(p3.z-p4.z)=0;
+    */
+    float3 normalVector=p3-p4;
+    float3 lineVector=p1-p2;
+    float dNom=dot(normalVector,lineVector);
+    if (dNom < 0.000001f && dNom > -0.000001f)
+    {
+        float3 retValue = {NAN, NAN,NAN};
+        return retValue;
+    }
+    float t=dot(p3-p1,normalVector)/dNom;
+    float3 retValue;
+    retValue.x=p1.x+t*(p1.x-p2.x); retValue.y=p1.y+t*(p1.y-p2.y);
+    retValue.z=p1.z+t*(p1.z-p2.z);
+    return retValue;
+}
+
+inline __device__ float sum(float *cache, int id)
+{
+    __syncthreads();
+	int i = blockDim.z / 2;
+	while (i != 0) {
+		if (id < i) {
+			cache[id] += cache[id + i];
+		}
+		__syncthreads();
+		i /= 2;
+	}
+	return cache[0];
+}
+#endif

@@ -69,38 +69,12 @@ __global__ void forwardKernel(float* sino, const uint3 volumeSize, const float3 
     float a3 = fabs(rayVector.z)/rayVectorDomainDim;
     float sampleInterval=sqrtf(a1*a1+a2*a2+a3*a3);
     float px, py, pz;
-//    float sampleInterval = fabs(sourcePosition.z) / fabs(detectorPixel.z-sourcePosition.z);
-/*
 
-    float tx1,ty1,tz1;
-    float tx2,ty2,tz2;
-    tx1=(0.0f+volumeCenter.x-sourcePoint.x)/(detectorPixel.x-sourcePoint.x);
-    tx2=(volumeSize.x+volumeCenter.x-sourcePoint.x)/(detectorPixel.x-sourcePoint.x);
-    ty1=(0.0f+volumeCenter.y-sourcePoint.y)/(detectorPixel.y-sourcePoint.y);
-    ty2=(volumeSize.y+volumeCenter.y-sourcePoint.y)/(detectorPixel.y-sourcePoint.y);
-    tz1=(0.0f+volumeCenter.z-sourcePoint.z)/(detectorPixel.z-sourcePoint.z);
-    tz2=(volumeSize.z+volumeCenter.z-sourcePoint.z)/(detectorPixel.z-sourcePoint.z);
-    //t (0,1) vaild
-    tx1=fabs(tx1)>1?0:tx1;tx2=fabs(tx2)>1?1:tx2;
-    ty1=fabs(ty1)>1?0:ty1;ty2=fabs(ty2)>1?1:ty2;
-    tz1=fabs(tz1)>1?0:tz1;tz2=fabs(tz2)>1?1:tz2;
-    float min_alpha=fmin(fmin(tx1,ty1),tz1)-3;
-    float max_alpha=fmax(fmax(tx2,ty2),tz2)+3;
-    */
-//    float sampleInterval = sqrt(fabs(rayVector.y*rayVector.y+rayVector.x*rayVector.x))/fabs(rayVector.z);
-    //pz = 0.0f+volumeCenter.z;
-    //py = (pz-sourcePoint.z)/(detectorPixel.z-sourcePoint.z)*
-    //(detectorPixel.y-sourcePoint.y)+sourcePoint.y;
-    //px = (pz-sourcePoint.z)/(detectorPixel.z-sourcePoint.z)*
-    //(detectorPixel.x-sourcePoint.x)+sourcePoint.x;
     while (min_alpha<max_alpha)
     {
         px = sourcePoint.x + min_alpha * rayVector.x;
         py = sourcePoint.y + min_alpha * rayVector.y;
         pz = sourcePoint.z + min_alpha * rayVector.z;
-        //px /= (sampleInterval);
-        //py /= (sampleInterval);
-        //pz /= (sampleInterval);
         px -= volumeCenter.x;
         py -= volumeCenter.y;
         pz -= volumeCenter.z;

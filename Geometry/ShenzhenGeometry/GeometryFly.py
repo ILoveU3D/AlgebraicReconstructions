@@ -31,7 +31,7 @@ class ShenzhenGeometry(Geometry):
         parameters = sco.loadmat(os.path.join(params["root"],"proj_vec.mat"))
         # parameters = h5py.File(os.path.join(params["root"], "proj_vec.mat"), 'r')
         self.projectVector = np.array(parameters['proj_vec'])
-        self.projectVector = self.projectVector[0:2048:65,:]
+        self.projectVector = self.projectVector[0:2048:1,:]
         self.projectVector[:, [0, 1, 3, 4, 6, 7, 9, 10]] /= 3
         self.projectVector[:, [2, 5]] += 0
         self.projectVector[:, [2, 5]] /= 3
